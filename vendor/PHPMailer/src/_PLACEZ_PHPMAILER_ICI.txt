@@ -1,0 +1,12 @@
+Placez ici les fichiers de PHPMailer.
+
+T�léchargez PHPMailer depuis :
+https://github.com/PHPMailer/PHPMailer/releases
+
+Copiez le contenu du dossier "src/" de l'archive dans ce dossier.
+Vous devez obtenir :
+  vendor/PHPMailer/src/PHPMailer.php
+  vendor/PHPMailer/src/SMTP.php
+  vendor/PHPMailer/src/Exception.php
+
+L'application fonctionne sans PHPMailer (les emails sont alors ignorés).

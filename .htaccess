@@ -1,0 +1,3 @@
+# Protéger les dossiers sensibles
+RedirectMatch 403 ^/.*/config/.*$
+RedirectMatch 403 ^/.*/database/.*\.sql$
