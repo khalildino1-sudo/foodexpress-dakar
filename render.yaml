@@ -2,7 +2,6 @@ services:
   # Service Web Principal - PHP
   - type: web
     name: foodexpress-dakar
-    runtime: php
     plan: free
     buildCommand: |
       mkdir -p assets/uploads/plats
@@ -50,11 +49,15 @@ services:
   # Base de Données MySQL
   - type: pserv
     name: foodexpress-mysql
-    runtime: mysql
     plan: free
-    ipAllowList:
-      - source: 0.0.0.0/0
-        description: Allow all IP addresses
+    startCommand: |
+      docker run --name mysql \
+        -e MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD \
+        -e MYSQL_DATABASE=foodexpress_dakar \
+        -e MYSQL_USER=foodexpress_user \
+        -e MYSQL_PASSWORD=$MYSQL_PASSWORD \
+        -p 3306:3306 \
+        mysql:8.0
     envVars:
       - key: MYSQL_ROOT_PASSWORD
         generateValue: true
