@@ -1,0 +1,90 @@
+services:
+  # Service Web Principal - PHP avec Apache
+  - type: web
+    name: foodexpress-dakar
+    runtime: php
+    runtimeVersion: 8.2
+    plan: free
+    buildCommand: |
+      # Créer les répertoires d'upload
+      mkdir -p assets/uploads/plats
+      mkdir -p assets/uploads/avatars
+      chmod 755 assets/uploads
+      chmod 755 assets/uploads/plats
+      chmod 755 assets/uploads/avatars
+    startCommand: php -S 0.0.0.0:8000 -t .
+    envVars:
+      - key: DB_HOST
+        value: ${DB_HOST}
+      - key: DB_NAME
+        value: ${DB_NAME}
+      - key: DB_USER
+        value: ${DB_USER}
+      - key: DB_PASS
+        value: ${DB_PASS}
+      - key: APP_URL
+        fromService:
+          type: web
+          name: foodexpress-dakar
+          property: host
+      - key: SMTP_HOST
+        value: smtp.gmail.com
+      - key: SMTP_PORT
+        value: "587"
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+
+  # Base de Données MySQL
+  - type: pserv
+    name: foodexpress-mysql
+    runtime: mysql
+    plan: free
+    ipAllowList:
+      - source: 0.0.0.0/0
+        description: Allow all IP addresses
+    envVars:
+      - key: MYSQL_ROOT_PASSWORD
+        generateValue: true
+      - key: MYSQL_DATABASE
+        value: foodexpress_dakar
+      - key: MYSQL_USER
+        value: foodexpress_user
+      - key: MYSQL_PASSWORD
+        generateValue: true
+
+# Variables d'environnement à configurer manuellement dans le dashboard Render
+envVarGroups:
+  - name: Database Configuration
+    vars:
+      - key: DB_HOST
+        value: ${foodexpress-mysql:DB_HOST}
+      - key: DB_PORT
+        value: "3306"
+      - key: DB_NAME
+        value: foodexpress_dakar
+      - key: DB_USER
+        value: foodexpress_user
+      - key: DB_PASS
+        value: ${foodexpress-mysql:MYSQL_PASSWORD}
+
+  - name: Email Configuration
+    vars:
+      - key: SMTP_USER
+        value: your_gmail@gmail.com
+      - key: SMTP_PASS
+        value: your_app_password
+      - key: SMTP_FROM_EMAIL
+        value: your_gmail@gmail.com
+      - key: SMTP_FROM_NAME
+        value: FoodExpress Dakar
+
+  - name: Application Configuration
+    vars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_TIMEZONE
+        value: Africa/Dakar

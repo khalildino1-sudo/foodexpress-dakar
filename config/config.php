@@ -15,9 +15,9 @@ if (session_status() === PHP_SESSION_NONE) {
 // Constantes de l'application
 define('APP_NAME', 'FoodExpress Dakar');
 define('APP_TAGLINE', 'Le goût authentique du Sénégal, livré chez vous');
-define('APP_URL', 'http://localhost/foodexpress-dakar');
+define('APP_URL', getenv('APP_URL') ?: 'http://localhost/foodexpress-dakar');
 define('APP_EMAIL', 'contact@foodexpress.sn');
-define('APP_TIMEZONE', 'Africa/Dakar');
+define('APP_TIMEZONE', getenv('APP_TIMEZONE') ?: 'Africa/Dakar');
 define('APP_CURRENCY', 'FCFA');
 define('APP_PHONE', '+221 33 800 00 00');
 
@@ -26,13 +26,13 @@ define('FRAIS_LIVRAISON', 1000);
 define('COMMANDE_MIN', 2000);
 
 // Config email (PHPMailer / Gmail SMTP)
-// REMPLACE par tes vrais identifiants Gmail App Password
-define('SMTP_HOST', 'smtp.gmail.com');
-define('SMTP_PORT', 587);
-define('SMTP_USER', 'ibrahima.ndiaye76@unchk.edu.sn');
-define('SMTP_PASS', 'vmhhcgeamkpibxrf');
-define('SMTP_FROM_NAME', 'FoodExpress Dakar');
-define('SMTP_FROM_EMAIL', 'ibrahima.ndiaye76@unchk.edu.sn');
+// Utilise les variables d'environnement ou les valeurs par défaut
+define('SMTP_HOST', getenv('SMTP_HOST') ?: 'smtp.gmail.com');
+define('SMTP_PORT', getenv('SMTP_PORT') ?: 587);
+define('SMTP_USER', getenv('SMTP_USER') ?: 'your_email@gmail.com');
+define('SMTP_PASS', getenv('SMTP_PASS') ?: 'your_app_password');
+define('SMTP_FROM_NAME', getenv('SMTP_FROM_NAME') ?: 'FoodExpress Dakar');
+define('SMTP_FROM_EMAIL', getenv('SMTP_FROM_EMAIL') ?: 'contact@foodexpress.sn');
 
 // === Google Maps ===
 // Laisse vide pour utiliser la carte gratuite sans clé.
