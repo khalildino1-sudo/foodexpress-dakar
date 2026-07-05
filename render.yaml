@@ -1,21 +1,17 @@
 services:
-  # Service Web Principal - PHP
   - type: web
-    name: foodexpress-dakar
+    name: foodexpress
     plan: free
+    startCommand: php -S 0.0.0.0:8000 -t .
     buildCommand: |
       mkdir -p assets/uploads/plats
       mkdir -p assets/uploads/avatars
       chmod 755 assets/uploads
       chmod 755 assets/uploads/plats
       chmod 755 assets/uploads/avatars
-    startCommand: php -S 0.0.0.0:8000 -t .
     envVars:
       - key: DB_HOST
-        fromService:
-          type: pserv
-          name: foodexpress-mysql
-          property: host
+        value: localhost
       - key: DB_PORT
         value: "3306"
       - key: DB_NAME
@@ -23,10 +19,7 @@ services:
       - key: DB_USER
         value: foodexpress_user
       - key: DB_PASS
-        fromService:
-          type: pserv
-          name: foodexpress-mysql
-          envVarKey: MYSQL_PASSWORD
+        sync: false
       - key: SMTP_HOST
         value: smtp.gmail.com
       - key: SMTP_PORT
@@ -45,25 +38,3 @@ services:
         value: "false"
       - key: APP_TIMEZONE
         value: Africa/Dakar
-
-  # Base de Données MySQL
-  - type: pserv
-    name: foodexpress-mysql
-    plan: free
-    startCommand: |
-      docker run --name mysql \
-        -e MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD \
-        -e MYSQL_DATABASE=foodexpress_dakar \
-        -e MYSQL_USER=foodexpress_user \
-        -e MYSQL_PASSWORD=$MYSQL_PASSWORD \
-        -p 3306:3306 \
-        mysql:8.0
-    envVars:
-      - key: MYSQL_ROOT_PASSWORD
-        generateValue: true
-      - key: MYSQL_DATABASE
-        value: foodexpress_dakar
-      - key: MYSQL_USER
-        value: foodexpress_user
-      - key: MYSQL_PASSWORD
-        generateValue: true
