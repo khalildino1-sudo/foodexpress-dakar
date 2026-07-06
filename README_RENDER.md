@@ -1,6 +1,6 @@
 # 🚀 Déploiement FoodExpress Dakar sur Render
 
-Guide complet pour héberger FoodExpress Dakar sur la plateforme **Render.com** avec Blueprint.
+Guide complet pour héberger FoodExpress Dakar sur la plateforme **Render.com** avec Blueprint et Docker.
 
 ---
 
@@ -21,27 +21,31 @@ Guide complet pour héberger FoodExpress Dakar sur la plateforme **Render.com** 
 3. Sélectionnez votre repository `khalildino1-sudo/foodexpress-dakar`
 4. Render détectera automatiquement le fichier `render.yaml`
 
-### 1.2 Configurer les Variables d'Environnement
+### 1.2 Architecture Docker
 
-Après le déploiement, allez dans **Environment** → **Environment Variables** et remplissez :
+L'application utilise un **Dockerfile** pour PHP 8.2 avec les dépendances nécessaires :
+- Image de base : `php:8.2-cli`
+- Serveur : PHP built-in server sur port 8000
+- Uploads : Répertoires créés automatiquement à la construction
 
-#### Base de Données
-```
-DB_HOST = <généré automatiquement>
-DB_PORT = 3306
-DB_NAME = foodexpress_dakar
-DB_USER = foodexpress_user
-DB_PASS = <généré automatiquement>
-```
+### 1.3 Configurer les Variables d'Environnement
 
-#### Email (Gmail SMTP)
+Après le déploiement initial, allez dans **Environment** → **Environment Variables** et remplissez :
+
+#### Email (Gmail SMTP) - **OBLIGATOIRE**
 ```
-SMTP_HOST = smtp.gmail.com
-SMTP_PORT = 587
 SMTP_USER = votre_email@gmail.com
 SMTP_PASS = votre_app_password
 SMTP_FROM_EMAIL = votre_email@gmail.com
-SMTP_FROM_NAME = FoodExpress Dakar
+```
+
+#### Base de Données (optionnel si DB externe)
+```
+DB_HOST = votre_host_mysql
+DB_PORT = 3306
+DB_NAME = foodexpress_dakar
+DB_USER = foodexpress_user
+DB_PASS = votre_password
 ```
 
 **Comment générer un Gmail App Password :**
@@ -50,35 +54,33 @@ SMTP_FROM_NAME = FoodExpress Dakar
 3. Copiez le mot de passe généré
 4. Collez-le dans `SMTP_PASS`
 
-#### Application
-```
-APP_ENV = production
-APP_DEBUG = false
-APP_TIMEZONE = Africa/Dakar
-APP_URL = https://votre-app.onrender.com
-```
-
 ---
 
 ## 🗄️ Étape 2 : Configuration de la Base de Données
 
-### 2.1 Importer le schéma SQL
+### Option A : Utiliser PlanetScale (MySQL compatible)
 
-1. Dans Render Dashboard, accédez au service **foodexpress-mysql**
-2. Cliquez sur **Connect**
-3. Utilisez l'onglet **MySQL CLI** ou un client MySQL
-4. Exécutez les commandes :
+1. Créez un compte sur https://planetscale.com
+2. Créez une base `foodexpress_dakar`
+3. Récupérez les identifiants de connexion
+4. Dans Render Dashboard, configurez :
+   - `DB_HOST` = votre host PlanetScale
+   - `DB_USER` = votre utilisateur
+   - `DB_PASS` = votre password
+
+### Option B : Utiliser une BD externe (AWS RDS, DigitalOcean, etc.)
+
+Même processus : récupérez les identifiants et configurez-les dans Render.
+
+### Importer le Schéma SQL
+
+1. Connectez-vous à votre BD MySQL
+2. Créez la base `foodexpress_dakar`
+3. Importez le fichier `database/foodexpress_dakar.sql` :
 
 ```bash
-# Connectez-vous avec les identifiants fournis
-mysql -h <host> -u foodexpress_user -p <password> foodexpress_dakar
-
-# Puis exécutez le SQL fourni (copier-coller depuis database/foodexpress_dakar.sql)
+mysql -h <host> -u <user> -p <password> foodexpress_dakar < database/foodexpress_dakar.sql
 ```
-
-Ou utilisez **phpMyAdmin** (si disponible) :
-1. Téléchargez le fichier `database/foodexpress_dakar.sql`
-2. Importez-le dans Render MySQL via l'interface
 
 ### 2.2 Vérifier la Connexion
 
@@ -97,7 +99,7 @@ Les répertoires d'upload sont créés automatiquement :
 
 **Note :** Sur Render, les uploads sont éphémères (perdus à chaque redéploiement). Pour persister les uploads, utilisez :
 - **Render Disks** (paiement requis)
-- **Stockage externe** (AWS S3, Azure Blob, etc.)
+- **Stockage externe** (AWS S3, Azure Blob, Cloudinary, etc.)
 
 Exemple avec S3 (optionnel) :
 ```php
@@ -105,6 +107,7 @@ Exemple avec S3 (optionnel) :
 define('UPLOAD_DRIVER', getenv('UPLOAD_DRIVER') ?: 'local');
 define('S3_KEY', getenv('S3_KEY'));
 define('S3_SECRET', getenv('S3_SECRET'));
+define('S3_BUCKET', getenv('S3_BUCKET'));
 ```
 
 ---
@@ -123,19 +126,24 @@ define('S3_SECRET', getenv('S3_SECRET'));
 ## 🛠️ Troubleshooting
 
 ### Erreur : "SMTP connection failed"
-- ✅ Vérifiez `SMTP_USER` et `SMTP_PASS`
-- ✅ Activez les "Apps moins sécurisées" sur https://myaccount.google.com/lesssecureapps
-- ✅ Utilisez un **App Password**, pas votre mot de passe Gmail
+- ✅ Vérifiez `SMTP_USER` et `SMTP_PASS` dans Render Dashboard
+- ✅ Utilisez un **App Password Gmail**, pas votre mot de passe normal
+- ✅ Vérifiez que les identifiants sont correctement configurés
 
 ### Erreur : "Database connection refused"
-- ✅ Vérifiez que le service MySQL est **running** (Render Dashboard)
+- ✅ Vérifiez que votre BD (PlanetScale, RDS, etc.) est accessible
 - ✅ Confirmez que `DB_HOST`, `DB_USER`, `DB_PASS` sont corrects
-- ✅ Attendez que la BD soit initialisée (peut prendre 1-2 min)
+- ✅ Vérifiez les logs : Render Dashboard → **Logs**
+
+### Erreur Docker : "Build failed"
+- ✅ Vérifiez que `Dockerfile` et `render.yaml` existent à la racine du repo
+- ✅ Consultez les logs de build dans Render Dashboard
+- ✅ Assurez-vous que tous les fichiers sont en UTF-8
 
 ### Images des plats ne s'affichent pas
-- ✅ Les uploads sont éphémères sur Render Free
+- ✅ Les uploads sont éphémères sur Render (perdus après redéploiement)
 - ✅ Utilisez des URLs externes (Google Images, CDN)
-- ✅ Ou upgrader vers un **Render Disk**
+- ✅ Ou configurez un stockage S3
 
 ### La page blanche / Erreur 500
 - ✅ Vérifiez les logs : Render Dashboard → **Logs**
@@ -148,14 +156,14 @@ define('S3_SECRET', getenv('S3_SECRET'));
 
 | Service | Plan | Coût |
 |---------|------|------|
-| Web (PHP) | Free | Gratuit |
-| MySQL | Free | Gratuit |
+| Web (Docker PHP) | Free | Gratuit |
+| MySQL (PlanetScale) | Free | Gratuit |
 | **Total** | | **Gratuit** 🎉 |
 
 **Limitations du plan Free :**
 - Web : reboot automatique après inactivité (15 min)
-- MySQL : reboot quotidien, 1 GB stockage max
-- Uploads éphémères
+- Builds Docker limités
+- Storage uploads éphémères
 
 Pour la production, upgrader à **Standard** ($7/mois+).
 
@@ -165,16 +173,28 @@ Pour la production, upgrader à **Standard** ($7/mois+).
 
 À chaque push sur GitHub (`main`) :
 1. Render détecte automatiquement le changement
-2. Reconstruit et redéploie l'app
-3. Zéro downtime (déploiement bleu/vert)
+2. Reconstruit l'image Docker
+3. Redéploie l'app avec zéro downtime
 
-Pour éviter les redéploiements accidentels, créez une branche `dev` :
+### Éviter les redéploiements accidentels
+
+Créez une branche `dev` :
 ```bash
 git checkout -b dev
 git push origin dev
 ```
 
-Puis mettez à jour `render.yaml` pour surveiller `main` seulement.
+Configurez `render.yaml` pour surveiller `main` uniquement.
+
+---
+
+## 📁 Fichiers Importants
+
+- **`render.yaml`** — Configuration Blueprint pour Render
+- **`Dockerfile`** — Image Docker PHP 8.2
+- **`.dockerignore`** — Fichiers à exclure du build
+- **`config/config.php`** — Configuration application (variables d'environnement)
+- **`database/foodexpress_dakar.sql`** — Schéma BD
 
 ---
 
@@ -187,3 +207,4 @@ Puis mettez à jour `render.yaml` pour surveiller `main` seulement.
 ---
 
 **Bonne chance pour votre déploiement! 🍛**
+
