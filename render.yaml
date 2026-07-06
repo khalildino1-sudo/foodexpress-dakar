@@ -1,8 +1,7 @@
 services:
-  - type: docker
+  - type: web
     name: foodexpress
     plan: free
-    dockerfilePath: ./Dockerfile
     envVars:
       - key: DB_HOST
         value: localhost
