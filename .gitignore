@@ -1,0 +1,41 @@
+# Environment variables (local/production credentials)
+.env
+.env.local
+.env.*.local
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Build artifacts
+build/
+dist/
+
+# Node modules (if using any build tools)
+node_modules/
+package-lock.json
+
+# Uploads (can have large files)
+assets/uploads/*
+!assets/uploads/.gitkeep
+
+# Session files
+sessions/
+tmp/
+
+# Logs
+*.log
+
+# Database backups
+*.sql.bak
+*.sql.zip
+
+# Vendor (if using Composer - optional, keep for shared packages)
+# vendor/
