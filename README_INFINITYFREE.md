@@ -168,12 +168,37 @@ Si vous voulez que l'application envoie des emails de confirmation :
 
 ## ⚠️ Problèmes courants
 
-### ❌ Erreur : "Access denied for user 'if0_42345166'"
+### ❌ Erreur 403 Interdit
 
-**Solution** :
-- Vérifiez que la base `if0_42345166_foodexpress` existe
-- Vérifiez que le fichier `.env` est au bon endroit et bien formaté
-- Redémarrez le service (attendre 5 min)
+**Symptôme** : Vous accédez au site et voyez "403 Interdit"
+
+**Solutions** :
+
+#### 1. Vérifiez que `index.php` est présent
+```
+Fichiers requis à la racine:
+✅ index.php      ← Doit être présent
+✅ .htaccess      ← Configuration Apache
+```
+
+#### 2. Vérifiez les permissions des dossiers (via FTP)
+```
+public_html/          → 755
+public_html/admin/    → 755
+public_html/client/   → 755
+public_html/assets/   → 755
+```
+
+#### 3. Si les permissions semblent correctes
+- Attendez 5-10 minutes après l'upload
+- Videz le cache du navigateur (Ctrl+Shift+Delete)
+- Accédez directement à `/client/index.php` au lieu de `/`
+- Vérifiez les logs d'erreur via le panneau d'admin InfinityFree
+
+#### 4. Vérifiez que `.htaccess` est activé
+- Dans le panneau InfinityFree, vérifiez que `mod_rewrite` est activé
+- Si vous voyez toujours l'erreur 403, le `.htaccess` peut être mal interprété
+- Essayez d'accéder directement à `/client/` sans `.htaccess`
 
 ### ❌ Les images ne s'affichent pas
 
@@ -199,6 +224,13 @@ Si vous voulez que l'application envoie des emails de confirmation :
 - Le `.env` n'est pas au bon endroit
 - Vérifiez que les credentials MySQL sont exacts
 - Testez via le gestionnaire MySQL du panneau d'admin
+
+### ❌ Erreur : "Access denied for user 'if0_42345166'"
+
+**Solution** :
+- Vérifiez que la base `if0_42345166_foodexpress` existe
+- Vérifiez que le fichier `.env` est au bon endroit et bien formaté
+- Redémarrez le service (attendre 5 min)
 
 ---
 
