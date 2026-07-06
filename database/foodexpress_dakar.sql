@@ -3,14 +3,13 @@
 -- À importer dans phpMyAdmin (WAMP)
 -- ============================================================
 
-DROP DATABASE IF EXISTS foodexpress_dakar;
-CREATE DATABASE foodexpress_dakar CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE IF NOT EXISTS foodexpress_dakar CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE foodexpress_dakar;
 
 -- ============================================================
 -- TABLE : users
 -- ============================================================
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(100) NOT NULL,
     prenom VARCHAR(100) NOT NULL,
@@ -31,7 +30,7 @@ CREATE TABLE users (
 -- ============================================================
 -- TABLE : categories
 -- ============================================================
-CREATE TABLE categories (
+CREATE TABLE IF NOT EXISTS categories (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(100) NOT NULL,
     slug VARCHAR(120) NOT NULL UNIQUE,
@@ -46,7 +45,7 @@ CREATE TABLE categories (
 -- ============================================================
 -- TABLE : plats
 -- ============================================================
-CREATE TABLE plats (
+CREATE TABLE IF NOT EXISTS plats (
     id INT AUTO_INCREMENT PRIMARY KEY,
     categorie_id INT NOT NULL,
     nom VARCHAR(150) NOT NULL,
@@ -73,7 +72,7 @@ CREATE TABLE plats (
 -- ============================================================
 -- TABLE : commandes
 -- ============================================================
-CREATE TABLE commandes (
+CREATE TABLE IF NOT EXISTS commandes (
     id INT AUTO_INCREMENT PRIMARY KEY,
     numero VARCHAR(20) NOT NULL UNIQUE,
     user_id INT NOT NULL,
@@ -99,7 +98,7 @@ CREATE TABLE commandes (
 -- ============================================================
 -- TABLE : details_commandes
 -- ============================================================
-CREATE TABLE details_commandes (
+CREATE TABLE IF NOT EXISTS details_commandes (
     id INT AUTO_INCREMENT PRIMARY KEY,
     commande_id INT NOT NULL,
     plat_id INT NOT NULL,
@@ -116,7 +115,7 @@ CREATE TABLE details_commandes (
 -- ============================================================
 -- TABLE : paiements
 -- ============================================================
-CREATE TABLE paiements (
+CREATE TABLE IF NOT EXISTS paiements (
     id INT AUTO_INCREMENT PRIMARY KEY,
     commande_id INT NOT NULL,
     methode ENUM('especes','wave','orange_money','carte') NOT NULL,
@@ -131,7 +130,7 @@ CREATE TABLE paiements (
 -- ============================================================
 -- TABLE : livraisons
 -- ============================================================
-CREATE TABLE livraisons (
+CREATE TABLE IF NOT EXISTS livraisons (
     id INT AUTO_INCREMENT PRIMARY KEY,
     commande_id INT NOT NULL,
     livreur VARCHAR(100) DEFAULT NULL,
@@ -148,7 +147,7 @@ CREATE TABLE livraisons (
 -- ============================================================
 -- TABLE : avis
 -- ============================================================
-CREATE TABLE avis (
+CREATE TABLE IF NOT EXISTS avis (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     plat_id INT DEFAULT NULL,
@@ -165,7 +164,7 @@ CREATE TABLE avis (
 -- ============================================================
 -- TABLE : promotions
 -- ============================================================
-CREATE TABLE promotions (
+CREATE TABLE IF NOT EXISTS promotions (
     id INT AUTO_INCREMENT PRIMARY KEY,
     code VARCHAR(50) NOT NULL UNIQUE,
     description VARCHAR(255),
@@ -182,7 +181,7 @@ CREATE TABLE promotions (
 -- ============================================================
 -- TABLE : options_plats (suppléments / personnalisation)
 -- ============================================================
-CREATE TABLE options_plats (
+CREATE TABLE IF NOT EXISTS options_plats (
     id INT AUTO_INCREMENT PRIMARY KEY,
     plat_id INT NOT NULL,
     nom VARCHAR(150) NOT NULL,
