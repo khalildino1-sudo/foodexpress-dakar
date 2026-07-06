@@ -2,13 +2,10 @@ services:
   - type: web
     name: foodexpress
     plan: free
-    startCommand: php -S 0.0.0.0:8000 -t .
-    buildCommand: |
-      mkdir -p assets/uploads/plats
-      mkdir -p assets/uploads/avatars
-      chmod 755 assets/uploads
-      chmod 755 assets/uploads/plats
-      chmod 755 assets/uploads/avatars
+    startCommand: >-
+      mkdir -p assets/uploads/plats assets/uploads/avatars &&
+      chmod 755 assets/uploads assets/uploads/plats assets/uploads/avatars &&
+      php -S 0.0.0.0:8000 -t .
     envVars:
       - key: DB_HOST
         value: localhost
