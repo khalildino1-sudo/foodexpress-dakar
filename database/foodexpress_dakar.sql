@@ -2,10 +2,11 @@
 -- FOODEXPRESS DAKAR - Base de données
 -- À importer dans phpMyAdmin (WAMP)
 -- ============================================================
--- NOTE: La base de données foodexpress_dakar doit être créée manuellement si elle n'existe pas.
--- Cet utilisateur n'a pas les permissions pour créer une base.
-
-USE foodexpress_dakar;
+-- IMPORTANT: 
+-- 1. Créez manuellement la base 'foodexpress_dakar' via phpMyAdmin
+--    (Bases de données > Créer > Nom: foodexpress_dakar > Charset: utf8mb4_unicode_ci)
+-- 2. Sélectionnez la base 'foodexpress_dakar' dans phpMyAdmin
+-- 3. Importez ce fichier SQL
 
 -- ============================================================
 -- TABLE : users
